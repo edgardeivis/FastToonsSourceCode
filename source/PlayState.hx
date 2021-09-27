@@ -179,6 +179,7 @@ class PlayState extends MusicBeatState
 	var bottomBoppers:BGSprite;
 	var santa:BGSprite;
 	var heyTimer:Float;
+	var popTimer:Float;
 
 	var bgGirls:BackgroundGirls;
 	var wiggleShit:WiggleEffect = new WiggleEffect();
@@ -554,6 +555,21 @@ class PlayState extends MusicBeatState
 					add(bg);
 				}
 
+			case 'scheming' | 'pop-it':
+				defaultCamZoom = 0.5;
+				curStage = 'white';
+				var bg:BGSprite = new BGSprite('white', -735, -200, 0.9, 0.9);
+				bg.scale.set(6,6);
+				add(bg);
+				
+				if(!ClientPrefs.lowQuality) {
+					upperBoppers = new BGSprite('bg_crewmate', -280, -310, 1, 1, ['bg_crewmate']);
+					upperBoppers.scale.set(3,3);
+					upperBoppers.alpha = 0.5;
+//					upperBoppers.setGraphicSize(Std.int(upperBoppers.width * 0.85));
+					upperBoppers.updateHitbox();
+					add(upperBoppers);
+				}
 			default:
 				defaultCamZoom = 0.9;
 				curStage = 'stage';
@@ -598,6 +614,7 @@ class PlayState extends MusicBeatState
 					gfVersion = 'gf-pixel';
 				default:
 					gfVersion = 'gf';
+					
 			}
 			SONG.player3 = gfVersion; //Fix for the Chart Editor
 		}
@@ -629,6 +646,10 @@ class PlayState extends MusicBeatState
 				BF_Y += 220;
 				GF_X += 180;
 				GF_Y += 300;
+			case 'white':
+				BF_X += 70;
+				GF_Y += 10;
+				GF_X += 490;
 		}
 
 		gf = new Character(GF_X, GF_Y, gfVersion);
@@ -1168,12 +1189,12 @@ class PlayState extends MusicBeatState
 						antialias = false;
 
 					case 'mall':
-						if(!ClientPrefs.lowQuality)
-							upperBoppers.dance(true);
-		
 						bottomBoppers.dance(true);
 						santa.dance(true);
-				}
+					
+					case 'scheming' | 'pop-it':
+						bottomBoppers.dance(true);
+					}
 
 				switch (swagCounter)
 				{
@@ -1701,7 +1722,7 @@ class PlayState extends MusicBeatState
 		#if !debug
 		perfectMode = false;
 		#end
-
+		gf.alpha = 0.5;
 		/*if (FlxG.keys.justPressed.NINE)
 		{
 			iconP1.swapOldIcon();
@@ -2201,6 +2222,9 @@ class PlayState extends MusicBeatState
 									case 3:
 										//Hurt note, does nothing.
 
+									case 4:
+										//Hurt note, does nothing.
+
 									default:
 										health -= 0.0475; //For testing purposes
 										songMisses++;
@@ -2342,6 +2366,7 @@ class PlayState extends MusicBeatState
 						bottomBoppers.animation.play('hey', true);
 						heyTimer = time;
 					}
+
 				}
 				if(value != 1) {
 					boyfriend.playAnim('hey', true);
@@ -3189,6 +3214,37 @@ class PlayState extends MusicBeatState
 							note.destroy();
 						}
 					}
+				case 4: //POP note
+					if(cpuControlled) return;
+
+					if(!boyfriend.stunned)
+					{
+						noteMiss(note.noteData);
+						if(!endingSong)
+						{
+							--songMisses;
+							RecalculateRating();
+							if(!note.isSustainNote) {
+								popTimer += 5;
+							}
+							else popTimer += 1;
+	
+							if(boyfriend.animation.getByName('hurt') != null) {
+								boyfriend.playAnim('hurt', true);
+								boyfriend.specialAnim = true;
+							}
+						}
+
+						note.wasGoodHit = true;
+						vocals.volume = 0;
+
+						if (!note.isSustainNote)
+						{
+							note.kill();
+							notes.remove(note, true);
+							note.destroy();
+						}
+					}
 					return;
 			}
 
@@ -3443,7 +3499,7 @@ class PlayState extends MusicBeatState
 		}
 		super.destroy();
 	}
-
+	
 	var lastStepHit:Int = -1;
 	override function stepHit()
 	{
@@ -3452,11 +3508,16 @@ class PlayState extends MusicBeatState
 		{
 			resyncVocals();
 		}
-
+		if (popTimer > 0)
+		{
+			health -= 0.05;
+			popTimer -= 0.5;
+		}
 		if(curStep == lastStepHit) {
 			return;
 		}
-
+		iconP1.angle = Math.sin(curStep) * SONG.bpm / 24;
+		iconP2.angle = Math.sin(curStep) * SONG.bpm / 24;
 		lastStepHit = curStep;
 		setOnLuas('curStep', curStep);
 		callOnLuas('onStepHit', []);
@@ -3469,7 +3530,6 @@ class PlayState extends MusicBeatState
 	override function beatHit()
 	{
 		super.beatHit();
-
 		if(lastBeatHit >= curBeat) {
 			trace('BEAT HIT: ' + curBeat + ', LAST HIT: ' + lastBeatHit);
 			return;
@@ -3514,6 +3574,7 @@ class PlayState extends MusicBeatState
 		}
 
 		if(curBeat % 2 == 0) {
+			upperBoppers.dance(true);
 			if (!boyfriend.animation.curAnim.name.startsWith("sing") && !boyfriend.specialAnim)
 			{
 				boyfriend.dance();
@@ -3532,15 +3593,16 @@ class PlayState extends MusicBeatState
 				if(!ClientPrefs.lowQuality) {
 					bgGirls.dance();
 				}
-
 			case 'mall':
 				if(!ClientPrefs.lowQuality) {
 					upperBoppers.dance(true);
+				}		
+			case 'scheming' | 'pop-it':
+				if(!ClientPrefs.lowQuality) {
+					upperBoppers.dance(true);
 				}
-
-				if(heyTimer <= 0) bottomBoppers.dance(true);
-				santa.dance(true);
-
+		
+			
 			case 'limo':
 				if(!ClientPrefs.lowQuality) {
 					grpLimoDancers.forEach(function(dancer:BackgroundDancer)

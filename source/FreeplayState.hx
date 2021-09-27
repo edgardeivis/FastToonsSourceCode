@@ -28,7 +28,8 @@ class FreeplayState extends MusicBeatState
 		['pico'],							//Week 3
 		['mom'],							//Week 4
 		['parents', 'parents', 'monster'],	//Week 5
-		['senpai', 'senpai', 'spirit']		//Week 6
+		['senpai', 'senpai', 'spirit'],		//Week 6
+		['fast']							//MAONGUSUS
 	];
 
 	var songs:Array<SongMetadata> = [];

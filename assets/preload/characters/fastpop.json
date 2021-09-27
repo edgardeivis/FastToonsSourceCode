@@ -1,0 +1,94 @@
+{
+	"animations": [
+		{
+			"loop": false,
+			"offsets": [
+				101,
+				-1
+			],
+			"anim": "idle",
+			"fps": 24,
+			"name": "fast toon idle",
+			"indices": []
+		},
+		{
+			"loop": true,
+			"offsets": [
+				101,
+				-1
+			],
+			"anim": "idle-loop",
+			"fps": 24,
+			"name": "fast toon idle",
+			"indices": [
+				10,
+				11,
+				12,
+				12
+			]
+		},
+		{
+			"loop": false,
+			"offsets": [
+				35,
+				-1
+			],
+			"anim": "singLEFT",
+			"fps": 24,
+			"name": "fast toon left",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				92,
+				0
+			],
+			"anim": "singRIGHT",
+			"fps": 24,
+			"name": "fast toon right",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				92,
+				37
+			],
+			"anim": "singUP",
+			"fps": 24,
+			"name": "fast toon up",
+			"indices": []
+		},
+		{
+			"loop": false,
+			"offsets": [
+				107,
+				-17
+			],
+			"anim": "singDOWN",
+			"fps": 24,
+			"name": "fast toon down",
+			"indices": []
+		}
+	],
+	"no_antialiasing": false,
+	"image": "characters/fasttoons_pop_it",
+	"position": [
+		130,
+		558
+	],
+	"healthicon": "fast",
+	"flip_x": false,
+	"healthbar_colors": [
+		0,
+		255,
+		34
+	],
+	"camera_position": [
+		0,
+		0
+	],
+	"sing_duration": 6.1,
+	"scale": 1
+}

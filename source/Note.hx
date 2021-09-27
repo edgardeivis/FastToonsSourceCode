@@ -28,7 +28,7 @@ class Note extends FlxSprite
 	public var eventName:String = '';
 	public var eventVal1:String = '';
 	public var eventVal2:String = '';
-
+	
 	public var colorSwap:ColorSwap;
 	public var inEditor:Bool = false;
 
@@ -43,6 +43,11 @@ class Note extends FlxSprite
 			switch(value) {
 				case 3: //Hurt note
 					reloadNote('HURT');
+					colorSwap.hue = 0;
+					colorSwap.saturation = 0;
+					colorSwap.brightness = 0;
+				case 4: //Popit note
+					reloadNote('POP');
 					colorSwap.hue = 0;
 					colorSwap.saturation = 0;
 					colorSwap.brightness = 0;
